@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppViewBuilder<TabbarView: View, OnboardingView: View>: View {
     
-    var showTabbar: Bool
+    var showTabbar: Bool = false
     @ViewBuilder var tabbarView: TabbarView
     @ViewBuilder var onboardingView: OnboardingView
     

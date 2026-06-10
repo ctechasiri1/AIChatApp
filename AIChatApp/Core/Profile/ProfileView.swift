@@ -1,0 +1,44 @@
+//
+//  ProfileView.swift
+//  AIChatApp
+//
+//  Created by Chiraphat Techasiri on 6/10/26.
+//
+
+import SwiftUI
+
+struct ProfileView: View {
+    
+    @State private var showSettingsView: Bool = false
+    
+    var body: some View {
+        NavigationStack {
+            Text("Profile")
+                .navigationTitle("Profile")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        settingsButton
+                    }
+                }
+                .sheet(isPresented: $showSettingsView) {
+                    Text("Setings View")
+                }
+        }
+    }
+    
+    private var settingsButton: some View {
+        Button {
+            onSettingsButtonPressed()
+        } label: {
+            Image(systemName: "gear")
+        }
+    }
+    
+    private func onSettingsButtonPressed() {
+        showSettingsView = true
+    }
+}
+
+#Preview {
+    ProfileView()
+}

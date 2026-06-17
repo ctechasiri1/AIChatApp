@@ -31,6 +31,8 @@ struct OnboardingCompletedView: View {
 }
 
 #Preview {
-    OnboardingCompletedView()
-        .environment(AppState())
+    NavigationStack {
+        OnboardingCompletedView()
+            .environment(AppState())
+    }
 }

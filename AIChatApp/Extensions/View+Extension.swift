@@ -16,4 +16,9 @@ extension View {
             .frame(height: 55)
             .background(.accent, in: .rect(cornerRadius: 16))
     }
+    
+    func tappableBackground() -> some View {
+        self
+            .background(Color.black.opacity(0.001))
+    }
 }

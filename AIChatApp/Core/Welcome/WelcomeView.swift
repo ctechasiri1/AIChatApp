@@ -11,19 +11,75 @@ struct WelcomeView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Welcome")
-                    .frame(maxHeight: .infinity)
-            
-                NavigationLink {
-                    OnboardingCompletedView()
-                } label: {
-                    Text("Get Started")
-                        .callToActionButtion()
+            ZStack {
+                ImageLoaderView()
+                    .ignoresSafeArea()
+                
+                VStack {
+                    Spacer()
+                    
+                    VStack {
+                        titleSection
+                            .padding(.top, 24)
+                        
+                        ctaSection
+                            .padding(16)
+                        
+                        policyLinks
+                            .padding(.bottom, 30)
+                    }
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
+                .ignoresSafeArea()
             }
-            .padding(16)
         }
+    }
+    
+    private var titleSection: some View {
+        VStack(spacing: 8) {
+            Text("AI Chat")
+                .font(.system(.largeTitle, weight: .semibold))
+            
+            Text("Github @ctechasiri1")
+                .font(.system(.subheadline))
+                .foregroundStyle(.secondary)
+        }
+    }
+    
+    private var ctaSection: some View {
+        VStack(spacing: 8) {
+            NavigationLink {
+                OnboardingCompletedView()
+            } label: {
+                Text("Get Started")
+                    .callToActionButtion()
+            }
+            
+            Text("Already have an account? Sign in.")
+                .underline()
+                .padding(8)
+                .tappableBackground()
+                .onTapGesture {
+                    
+                }
+        }
+    }
+    
+    private var policyLinks: some View {
+        HStack(spacing: 8) {
+            Link(destination: URL(string: Constants.termsOfServiceURL)!) {
+                Text("Terms of Service")
+            }
+            
+            Circle()
+                .frame(width: 4, height: 4)
+            
+            Link(destination: URL(string: Constants.privacyPolicyURL)!) {
+                Text("Privacy Policy")
+            }
+        }
+        .foregroundStyle(.accent)
     }
 }
 

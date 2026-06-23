@@ -16,7 +16,7 @@ struct HeroCellView: View {
     var body: some View {
         ZStack {
             if let imageName {
-                ImageLoaderView(imageString: imageName)
+                ImageLoaderView(urlString: imageName)
             } else {
                 Rectangle()
                     .fill(.accent)
@@ -37,17 +37,7 @@ struct HeroCellView: View {
             .foregroundStyle(.white)
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                LinearGradient(
-                    colors: [
-                        Color.black.opacity(0.0),
-                        Color.black.opacity(0.3),
-                        Color.black.opacity(0.4)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
+            .addingGradientBackgroundForText()
         }
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }

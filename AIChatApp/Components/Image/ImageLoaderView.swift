@@ -9,13 +9,13 @@ import SDWebImageSwiftUI
 import SwiftUI
 
 struct ImageLoaderView: View {
-    var imageString: String = Constants.randomImage
+    var urlString: String = Constants.randomImage
     var resizingMode: ContentMode = .fill
     
     var body: some View {
         Rectangle()
             .overlay {
-                WebImage(url: URL(string: imageString))
+                WebImage(url: URL(string: urlString))
                     .resizable()
                     .indicator(.activity)
                     .aspectRatio(contentMode: resizingMode)

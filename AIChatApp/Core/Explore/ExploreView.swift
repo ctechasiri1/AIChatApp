@@ -11,12 +11,14 @@ struct ExploreView: View {
     
     @State private var avatars: [AvatarModel] = AvatarModel.mocks
     @State private var characterOptions: [CharacterOption] = CharacterOption.allCases
+    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
     
     var body: some View {
         NavigationStack {
             List {
                 featureSection
                 categorySection
+                popularSection
             }
             .navigationTitle("Explore")
         }
@@ -30,10 +32,13 @@ struct ExploreView: View {
                     subtitle: avatar.characterDescription,
                     imageName: avatar.profileImageName
                 )
+                .anyButton(.press) {
+                    
+                }
             }
             .removeListRowFormatting()
         } header: {
-            Text("FEATURED AVATARS")
+            Text("Featured".uppercased())
         }
     }
     
@@ -46,6 +51,9 @@ struct ExploreView: View {
                             title: character.rawValue.capitalized,
                             imageName: Constants.randomImage
                         )
+                        .anyButton {
+                            
+                        }
                     }
                 }
             }
@@ -55,7 +63,24 @@ struct ExploreView: View {
             .scrollTargetBehavior(.viewAligned)
             .removeListRowFormatting()
         } header: {
-            Text("CATEGORIES")
+            Text("Categories".uppercased())
+        }
+    }
+    
+    private var popularSection: some View {
+        Section {
+            ForEach(popularAvatars, id: \.self) { avatar in
+                CustomListCellView(
+                    title: avatar.name,
+                    description: avatar.characterDescription
+                )
+                .anyButton(.highlight) {
+                    
+                }
+            }
+            .removeListRowFormatting()
+        } header: {
+            Text("Popular".uppercased())
         }
     }
 }

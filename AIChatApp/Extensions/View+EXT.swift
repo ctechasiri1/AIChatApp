@@ -1,5 +1,5 @@
 //
-//  View+Extension.swift
+//  View+EXT.swift
 //  AIChatApp
 //
 //  Created by Chiraphat Techasiri on 6/10/26.

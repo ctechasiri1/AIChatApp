@@ -40,7 +40,7 @@ struct ProfileView: View {
                     SettingsView()
                 }
             .fullScreenCover(isPresented: $showCreateAvatarView) {
-                Text("Add New Avatar")
+                CreateAvatarView()
             }
         }
     }
@@ -80,7 +80,7 @@ struct ProfileView: View {
                             description: nil
                         )
                         .anyButton(.highlight) {
-                                
+                            
                         }
                     }
                     .onDelete { indexSet in
@@ -113,7 +113,7 @@ struct ProfileView: View {
     }
     
     private func getData() async {
-        try? await Task.sleep(for: .seconds(5))
+        try? await Task.sleep(for: .seconds(3))
         isLoading = false
         myAvatars = AvatarModel.mocks
     }

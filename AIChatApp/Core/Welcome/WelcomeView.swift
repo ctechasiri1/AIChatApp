@@ -9,6 +9,8 @@ import SwiftUI
 
 struct WelcomeView: View {
     
+    @State private var showCreateAccountView: Bool = false
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -32,6 +34,13 @@ struct WelcomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                 }
                 .ignoresSafeArea()
+            }
+            .sheet(isPresented: $showCreateAccountView) {
+                CreateAccountView(
+                    title: "Sign in",
+                    description: "Connect to an existing account."
+                )
+                    .presentationDetents([.height(270)])
             }
         }
     }
@@ -61,9 +70,13 @@ struct WelcomeView: View {
                 .padding(8)
                 .tappableBackground()
                 .onTapGesture {
-                    
+                    onSignInPressed()
                 }
         }
+    }
+    
+    private func onSignInPressed() {
+        showCreateAccountView = true
     }
     
     private var policyLinks: some View {

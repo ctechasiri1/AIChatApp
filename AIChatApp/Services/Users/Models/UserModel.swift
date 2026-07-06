@@ -39,25 +39,25 @@ struct UserModel {
     static var mocks: [Self] {
         return [
             UserModel(
-                userId: "user_001",
+                userId: "user1",
                 dateCreated: Date(),
                 didCompleteOnboarding: true,
                 profileColorHex: "#FF5733"
             ),
             UserModel(
-                userId: "user_002",
+                userId: "user2",
                 dateCreated: Date().addingTimeInterval(-86_400 * 7),
                 didCompleteOnboarding: false,
                 profileColorHex: "#3498DB"
             ),
             UserModel(
-                userId: "user_003",
+                userId: "user3",
                 dateCreated: Date().addingTimeInterval(-86_400 * 30),
                 didCompleteOnboarding: nil,
                 profileColorHex: nil
             ),
             UserModel(
-                userId: "user_004",
+                userId: "user4",
                 dateCreated: nil,
                 didCompleteOnboarding: true,
                 profileColorHex: "#2ECC71"

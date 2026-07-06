@@ -1,5 +1,5 @@
 //
-//  ChatView.swift
+//  ChatsView.swift
 //  AIChatApp
 //
 //  Created by Chiraphat Techasiri on 6/10/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatView: View {
+struct ChatsView: View {
     private let chats: [ChatModel] = ChatModel.mocks
     
     var body: some View {
@@ -38,5 +38,5 @@ struct ChatView: View {
 }
 
 #Preview {
-    ChatView()
+    ChatsView()
 }

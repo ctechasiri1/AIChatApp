@@ -19,10 +19,43 @@ struct ChatView: View {
     @State private var showAlert: AnyAppAlert?
     @State private var showChatSettings: AnyAppAlert?
     
+    @State private var showProfileModal: Bool = false
+    
     var body: some View {
-        VStack(spacing: 0) {
-            scrollViewSection
-            textFieldSection
+        ZStack {
+            VStack(spacing: 0) {
+                scrollViewSection
+                textFieldSection
+            }
+            
+            ZStack {
+                if showProfileModal {
+                    Color.black.opacity(0.6)
+                        .ignoresSafeArea()
+                        .transition(AnyTransition.opacity.animation(.smooth))
+                        .onTapGesture {
+                            onXMarkPressed()
+                        }
+                        .zIndex(1)
+                    
+                    if let avatar {
+                        ProfileModalView(
+                            imageName: avatar.profileImageName,
+                            title: avatar.name,
+                            subtitle: avatar.characterOption?.rawValue.capitalized,
+                            headline: avatar.characterDescription,
+                            onXMarkPressed: {
+                                onXMarkPressed()
+                            }
+                        )
+                        .padding(40)
+                        .transition(.slide)
+                        .zIndex(2)
+                    }
+                }
+            }
+            .zIndex(9999)
+            .animation(.bouncy, value: showProfileModal)
         }
         .navigationTitle(avatar?.name ?? "Chat")
         .navigationBarTitleDisplayMode(.inline)
@@ -49,7 +82,9 @@ struct ChatView: View {
                         message: message,
                         isCurrentUser: isCurrentUser,
                         imageName: isCurrentUser ? nil : avatar?.profileImageName
-                    )
+                    ) {
+                        onAvatarImagePressed()
+                    }
                     .id(message.id)
                 }
             }
@@ -132,6 +167,14 @@ struct ChatView: View {
                 title: error.localizedDescription
                 )
         }
+    }
+    
+    private func onAvatarImagePressed() {
+        showProfileModal = true
+    }
+    
+    private func onXMarkPressed() {
+        showProfileModal = false
     }
 }
 

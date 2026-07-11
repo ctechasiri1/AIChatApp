@@ -11,6 +11,7 @@ import SwiftUI
 struct ImageLoaderView: View {
     var urlString: String = Constants.randomImage
     var resizingMode: ContentMode = .fill
+    var forceTransitionAnimation: Bool = false
     
     var body: some View {
         Rectangle()
@@ -20,8 +21,24 @@ struct ImageLoaderView: View {
                     .resizable()
                     .indicator(.activity)
                     .aspectRatio(contentMode: resizingMode)
+                    .allowsHitTesting(false)
             }
             .clipped()
+            .ifForceTransitionAnimation(for: forceTransitionAnimation) { content in
+                content
+                    .drawingGroup()
+            }
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func ifForceTransitionAnimation(for condition: Bool, content: (Self) -> some View) -> some View {
+        if condition {
+            content(self)
+        } else {
+            self
+        }
     }
 }
 

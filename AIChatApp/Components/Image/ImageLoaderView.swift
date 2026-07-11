@@ -31,17 +31,6 @@ struct ImageLoaderView: View {
     }
 }
 
-extension View {
-    @ViewBuilder
-    func ifForceTransitionAnimation(for condition: Bool, content: (Self) -> some View) -> some View {
-        if condition {
-            content(self)
-        } else {
-            self
-        }
-    }
-}
-
 #Preview {
     ImageLoaderView()
         .frame(width: 100, height: 200)

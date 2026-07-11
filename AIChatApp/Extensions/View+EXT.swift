@@ -50,4 +50,14 @@ extension View {
             )
         )
     }
+    
+    /// this should be the last option for anything, there probably is a better way to do this
+    @ViewBuilder
+    func ifForceTransitionAnimation(for condition: Bool, content: (Self) -> some View) -> some View {
+        if condition {
+            content(self)
+        } else {
+            self
+        }
+    }
 }

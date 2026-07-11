@@ -22,40 +22,9 @@ struct ChatView: View {
     @State private var showProfileModal: Bool = false
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                scrollViewSection
-                textFieldSection
-            }
-            
-            ZStack {
-                if showProfileModal {
-                    Color.black.opacity(0.6)
-                        .ignoresSafeArea()
-                        .transition(AnyTransition.opacity.animation(.smooth))
-                        .onTapGesture {
-                            onXMarkPressed()
-                        }
-                        .zIndex(1)
-                    
-                    if let avatar {
-                        ProfileModalView(
-                            imageName: avatar.profileImageName,
-                            title: avatar.name,
-                            subtitle: avatar.characterOption?.rawValue.capitalized,
-                            headline: avatar.characterDescription,
-                            onXMarkPressed: {
-                                onXMarkPressed()
-                            }
-                        )
-                        .padding(40)
-                        .transition(.slide)
-                        .zIndex(2)
-                    }
-                }
-            }
-            .zIndex(9999)
-            .animation(.bouncy, value: showProfileModal)
+        VStack(spacing: 0) {
+            scrollViewSection
+            textFieldSection
         }
         .navigationTitle(avatar?.name ?? "Chat")
         .navigationBarTitleDisplayMode(.inline)
@@ -71,6 +40,12 @@ struct ChatView: View {
             }
         }
         .showCustomAlert(alert: $showAlert)
+        // MARK: There is a bug with overlay where nav bar is always the highest level view
+        .showModal(for: $showProfileModal) {
+            if let avatar {
+                profileModal(avatar: avatar)
+            }
+        }
     }
     
     private var scrollViewSection: some View {
@@ -123,6 +98,20 @@ struct ChatView: View {
             )
             .padding()
             .background(Color(uiColor: .systemGray6))
+    }
+    
+    private func profileModal(avatar: AvatarModel) -> some View {
+        ProfileModalView(
+            imageName: avatar.profileImageName,
+            title: avatar.name,
+            subtitle: avatar.characterOption?.rawValue.capitalized,
+            headline: avatar.characterDescription,
+            onXMarkPressed: {
+                onXMarkPressed()
+            }
+        )
+        .padding(40)
+        .transition(.slide)
     }
     
     private func onShowChatSettingsPressed() {

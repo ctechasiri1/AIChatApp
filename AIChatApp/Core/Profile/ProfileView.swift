@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ProfileView: View {
     
+    @State var path: [NavigationPathOption] = []
+    
     @State private var currentUser: UserModel = .mock
     @State private var myAvatars: [AvatarModel] = []
     @State private var showSettingsView: Bool = false
@@ -16,7 +18,7 @@ struct ProfileView: View {
     @State private var isLoading: Bool = true
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 myInfoSection
                 myAvatarSection
@@ -24,8 +26,9 @@ struct ProfileView: View {
             .navigationTitle(
                 "Profile"
             )
+            .navigationDestinationForCore(path: $path)
             .task {
-               await getData()
+                await getData()
             }
             .toolbar {
                 ToolbarItem(
@@ -37,8 +40,8 @@ struct ProfileView: View {
             .sheet(
                 isPresented: $showSettingsView
             ) {
-                    SettingsView()
-                }
+                SettingsView()
+            }
             .fullScreenCover(isPresented: $showCreateAvatarView) {
                 CreateAvatarView()
             }
@@ -80,7 +83,7 @@ struct ProfileView: View {
                             description: nil
                         )
                         .anyButton(.highlight) {
-                            
+                            onAvatarPressed(avatar: avatar)
                         }
                     }
                     .onDelete { indexSet in
@@ -129,6 +132,10 @@ struct ProfileView: View {
     
     private func onCreateNewAvatarPressed() {
         showCreateAvatarView = true
+    }
+    
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 

@@ -9,14 +9,16 @@ import SwiftUI
 
 struct CategoryListView: View {
     
-    var character: CharacterOption = .alien
+    @Binding var path: [NavigationPathOption]
+    
+    var category: CharacterOption = .alien
     var imageName: String = Constants.randomImage
     @State private var avatars: [AvatarModel] = AvatarModel.mocks
     
     var body: some View {
         List {
             CategoryCellView(
-                title: character.pural.capitalized,
+                title: category.pural.capitalized,
                 imageName: imageName,
                 font: .largeTitle,
                 cornderRadius: 0
@@ -29,14 +31,24 @@ struct CategoryListView: View {
                     title: avatar.name,
                     description: avatar.characterDescription
                 )
+                .anyButton(.highlight) {
+                    onAvatarPressed(avatar: avatar)
+                }
                 .removeListRowFormatting()
             }
         }
         .ignoresSafeArea()
         .listStyle(PlainListStyle())
+        .navigationDestinationForCore(path: $path)
+    }
+    
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 
 #Preview {
-    CategoryListView()
+    @State @Previewable var path: [NavigationPathOption] = []
+    
+    CategoryListView(path: $path)
 }

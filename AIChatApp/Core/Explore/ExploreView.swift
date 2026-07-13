@@ -48,7 +48,7 @@ struct ExploreView: View {
                 HStack(spacing: 12) {
                     ForEach(characterOptions, id: \.self) { character in
                         CategoryCellView(
-                            title: character.rawValue.capitalized,
+                            title: character.pural.capitalized,
                             imageName: Constants.randomImage
                         )
                         .anyButton {

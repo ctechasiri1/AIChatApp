@@ -10,6 +10,21 @@ import Foundation
 enum CharacterOption: String, CaseIterable, Hashable {
     case man, woman, alien, dog, cat
     
+    var pural: String {
+        switch self {
+        case .man:
+            return "men"
+        case .woman:
+            return "women"
+        case .alien:
+            return "aliens"
+        case .dog:
+            return "dogs"
+        case .cat:
+            return "cats"
+        }
+    }
+    
     var startsWithVowel: Bool {
         switch self {
         case .alien:

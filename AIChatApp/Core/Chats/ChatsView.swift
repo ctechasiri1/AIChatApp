@@ -11,11 +11,34 @@ struct ChatsView: View {
     
     @State var path: [NavigationPathOption] = []
     
-    private let chats: [ChatModel] = ChatModel.mocks
+    @State private var chats: [ChatModel] = ChatModel.mocks
+    @State private var avatar: [AvatarModel] = AvatarModel.mocks
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                if !chats.isEmpty {
+                    recentsSection
+                }
+                
+                chatsSection
+            }
+            .navigationTitle("Chats")
+            .navigationDestinationForCore(path: $path)
+        }
+    }
+    
+    private var chatsSection: some View {
+        Section {
+            if chats.isEmpty {
+                Text("Your chats will appear here.")
+                    .foregroundStyle(.secondary)
+                    .font(.title3)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(40)
+                    .removeListRowFormatting()
+            } else {
                 ForEach(chats) { chat in
                     ChatRowCellViewBuilder(
                         currentUserId: nil, // add later
@@ -35,13 +58,45 @@ struct ChatsView: View {
                     .removeListRowFormatting()
                 }
             }
-            .navigationTitle("Chats")
-            .navigationDestinationForCore(path: $path)
+        } header: {
+            Text("CHATS")
+        }
+    }
+    
+    private var recentsSection: some View {
+        Section {
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 8) {
+                    ForEach(avatar, id: \.self) { avatar in
+                        VStack(spacing: 8) {
+                            if let imageName = avatar.profileImageName {
+                                ImageLoaderView(urlString: imageName)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .clipShape(Circle())
+                            }
+                            
+                            Text(avatar.name ?? "")
+                        }
+                        .anyButton {
+                            onAvatarPressed(avatar: avatar)
+                        }
+                    }
+                }
+                .padding(.top, 12)
+            }
+            .frame(height: 120)
+            .removeListRowFormatting()
+        } header: {
+            Text("RECENTS")
         }
     }
     
     private func onChatPressed(chat: ChatModel) {
         path.append(.chat(avatarId: chat.avatarId))
+    }
+    
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 

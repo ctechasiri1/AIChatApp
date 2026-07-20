@@ -10,11 +10,13 @@ import SwiftfulUtilities
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.authService) private var authService
     @Environment(AppState.self) private var appState
     
-    @State private var isPremium: Bool = true
-    @State private var isAnonymousUser: Bool = true
-    @State private var showCreateAccountView: Bool = true
+    @State private var isPremium: Bool = false
+    @State private var isAnonymousUser: Bool = false
+    @State private var showCreateAccountView: Bool = false
+    @State private var showAlert: AnyAppAlert?
     
     var body: some View {
         NavigationStack {
@@ -25,10 +27,17 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
-        .sheet(isPresented: $showCreateAccountView) {
+        .sheet(isPresented: $showCreateAccountView,
+        onDismiss: {
+            setAnonymousAccountStatus()
+        }, content: {
             CreateAccountView()
                 .presentationDetents([.height(270)])
+        })
+        .onAppear {
+            setAnonymousAccountStatus()
         }
+        .showCustomAlert(alert: $showAlert)
     }
     
     var accountSection: some View {
@@ -38,13 +47,13 @@ struct SettingsView: View {
                     Text("Save & back-up account")
                         .rowFormatting()
                         .anyButton(.highlight) {
-                            onPressedButtonSignOut()
+                            onCreateAccountPressed()
                         }
                 } else {
                     Text("Sign out")
                         .rowFormatting()
                         .anyButton(.highlight) {
-                            onPressedButtonSignOut()
+                            onSignOutButtonPressed()
                         }
                 }
   
@@ -52,7 +61,7 @@ struct SettingsView: View {
                     .foregroundStyle(.red)
                     .rowFormatting()
                     .anyButton(.highlight) {
-                        
+                        onDeleteButtonPressed()
                     }
             }
             .removeListRowFormatting()
@@ -81,7 +90,6 @@ struct SettingsView: View {
         } header: {
             Text("Purchases")
         }
-
     }
     
     var applicationSection: some View {
@@ -121,16 +129,55 @@ struct SettingsView: View {
         }
     }
     
-    func onPressedButtonSignOut() {
-        dismiss()
+    func onSignOutButtonPressed() {
         Task {
-            try? await Task.sleep(for: .seconds(1))
-            appState.updateViewState(showTabBarView: false)
+            do {
+                try authService.signOut()
+                await dismissScreen()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
         }
+    }
+    
+    func onDeleteButtonPressed() {
+        showAlert = AnyAppAlert(
+            title: "Delete Account?",
+            subtitle: "This is action is permanent and can't be undone. Your data will be deleted from our server forever.",
+            buttons: {
+                AnyView(
+                    Button("Delete", role: .destructive, action: {
+                        onDeleteAccountConfirmed()
+                    })
+                )
+            }
+        )
     }
     
     func onCreateAccountPressed() {
         showCreateAccountView = true
+    }
+    
+    // Checks if the authenticated user is anonymous and sets our private var
+    func setAnonymousAccountStatus() {
+        isAnonymousUser = authService.getAuthenticatedUser()?.isAnonymous == true
+    }
+    
+    private func dismissScreen() async {
+        dismiss()
+        try? await Task.sleep(for: .seconds(1))
+        appState.updateViewState(showTabBarView: false)
+    }
+
+    private func onDeleteAccountConfirmed() {
+        Task {
+            do {
+                try await authService.deleteAccount()
+                await dismissScreen()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
+        }
     }
 }
 

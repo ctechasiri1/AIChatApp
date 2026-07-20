@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    
+    @Environment(AppState.self) private var appState
     @State private var showCreateAccountView: Bool = false
     
     var body: some View {
@@ -38,8 +38,9 @@ struct WelcomeView: View {
             .sheet(isPresented: $showCreateAccountView) {
                 CreateAccountView(
                     title: "Sign in",
-                    description: "Connect to an existing account."
-                )
+                    description: "Connect to an existing account.") { isNewUser in
+                        handleDidSignIn(isNewUser: isNewUser)
+                    }
                     .presentationDetents([.height(270)])
             }
         }
@@ -93,6 +94,12 @@ struct WelcomeView: View {
             }
         }
         .foregroundStyle(.accent)
+    }
+    
+    private func handleDidSignIn(isNewUser: Bool) {
+        if !isNewUser {
+            appState.updateViewState(showTabBarView: true)
+        }
     }
 }
 

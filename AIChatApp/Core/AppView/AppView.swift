@@ -9,8 +9,8 @@ import SwiftUI
 
 struct AppView: View {
     
-    @State var appState: AppState = AppState()
     @Environment(\.authService) private var authService
+    @State var appState: AppState = AppState()
     
     var body: some View {
         AppViewBuilder(
@@ -25,6 +25,14 @@ struct AppView: View {
         .environment(appState)
         .task {
             await checkUserStatus()
+        }
+        // logout or delete account will trigger change from tab view to welcome view which will generate a new anonymous id
+        .onChange(of: appState.showTabBar) { _, showTabBar in
+            Task {
+                if !showTabBar {
+                    await checkUserStatus()
+                }
+            }
         }
     }
     

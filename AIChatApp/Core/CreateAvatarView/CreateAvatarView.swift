@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CreateAvatarView: View {
-    
     @Environment(\.dismiss) private var dismiss
     
     @State private var avatarName: String = ""

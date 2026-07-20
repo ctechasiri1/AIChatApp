@@ -2,11 +2,10 @@
 //  UserAuthInfo+Firebase.swift
 //  AIChatApp
 //
-//  Created by Chiraphat Techasiri on 7/17/26.
+//  Created by Chiraphat Techasiri on 7/20/26.
 //
 
 import FirebaseAuth
-import Foundation
 
 extension UserAuthInfo {
     init(user: User) {

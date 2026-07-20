@@ -2,10 +2,10 @@
 //  UserAuthInfo.swift
 //  AIChatApp
 //
-//  Created by Chiraphat Techasiri on 7/17/26.
+//  Created by Chiraphat Techasiri on 7/20/26.
 //
 
-import Foundation
+import SwiftUI
 
 struct UserAuthInfo: Sendable {
     let uid: String
@@ -20,5 +20,15 @@ struct UserAuthInfo: Sendable {
         self.isAnonymous = isAnonymous
         self.creationDate = creationDate
         self.lastSignInDate = lastSignInDate
+    }
+    
+    static func mock(isAnonymous: Bool = false) -> Self {
+        UserAuthInfo(
+            uid: "mock_user_123",
+            email: "hello@gmail.com",
+            isAnonymous: isAnonymous,
+            creationDate: .now,
+            lastSignInDate: .now
+        )
     }
 }

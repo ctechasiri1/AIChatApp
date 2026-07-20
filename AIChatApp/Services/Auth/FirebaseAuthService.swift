@@ -11,10 +11,50 @@ import SwiftUI
 import SignInAppleAsync
 
 extension EnvironmentValues {
-    @Entry var authService: FirebaseAuthService = FirebaseAuthService()
+    @Entry var authService: AuthService = MockAuthService()
 }
 
-struct FirebaseAuthService {
+protocol AuthService: Sendable {
+    func getAuthenticatedUser() -> UserAuthInfo?
+    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    func signInApple() async throws -> (user: UserAuthInfo, isNewUser: Bool)
+    func signOut() throws
+    func deleteAccount() async throws
+}
+
+struct MockAuthService: AuthService {
+    
+    let currentUser: UserAuthInfo?
+    
+    init(user: UserAuthInfo? = nil) {
+        self.currentUser = user
+    }
+    
+    func getAuthenticatedUser() -> UserAuthInfo? {
+        print("getAuthenticatedUser getting called \(currentUser?.isAnonymous)")
+        return currentUser
+    }
+    
+    func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo.mock(isAnonymous: true)
+        return (user, true)
+    }
+    
+    func signInApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo.mock(isAnonymous: false)
+        return (user, false)
+    }
+    
+    func signOut() throws {
+    
+    }
+    
+    func deleteAccount() async throws {
+
+    }
+}
+
+struct FirebaseAuthService: AuthService {
     enum AuthError: LocalizedError {
         case userNotFound
         
@@ -25,6 +65,7 @@ struct FirebaseAuthService {
             }
         }
     }
+    
     func getAuthenticatedUser() -> UserAuthInfo? {
         if let user = Auth.auth().currentUser {
             return UserAuthInfo(user: user)

@@ -163,13 +163,13 @@ struct SettingsView: View {
         isAnonymousUser = authService.getAuthenticatedUser()?.isAnonymous == true
     }
     
-    private func dismissScreen() async {
+    func dismissScreen() async {
         dismiss()
         try? await Task.sleep(for: .seconds(1))
         appState.updateViewState(showTabBarView: false)
     }
 
-    private func onDeleteAccountConfirmed() {
+    func onDeleteAccountConfirmed() {
         Task {
             do {
                 try await authService.deleteAccount()
@@ -191,7 +191,20 @@ fileprivate extension View {
     }
 }
 
-#Preview {
+#Preview("Not Authenthicated") {
     SettingsView()
+        .environment(\.authService, MockAuthService(user: nil))
+        .environment(AppState())
+}
+
+#Preview("Anonymous") {
+    SettingsView()
+        .environment(\.authService, MockAuthService(user: UserAuthInfo.mock(isAnonymous: true)))
+        .environment(AppState())
+}
+
+#Preview("Not Anonymous") {
+    SettingsView()
+        .environment(\.authService, MockAuthService(user: UserAuthInfo.mock(isAnonymous: false)))
         .environment(AppState())
 }

@@ -10,15 +10,29 @@ import Foundation
 import SwiftUI
 import SignInAppleAsync
 
+private enum AuthError: LocalizedError {
+    case userNotFound
+    
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            return "Current authenticated user not found."
+        }
+    }
+}
+
 struct FirebaseAuthService: AuthService {
-    enum AuthError: LocalizedError {
-        case userNotFound
-        
-        var errorDescription: String? {
-            switch self {
-            case .userNotFound:
-                return "Current authenticated user not found."
+    func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?> {
+        AsyncStream(UserAuthInfo?.self) { continuation in
+            let listener = Auth.auth().addStateDidChangeListener { _, currentUser in
+                if let currentUser {
+                    let user = UserAuthInfo(user: currentUser)
+                    continuation.yield(user)
+                } else {
+                    continuation.yield(nil)
+                }
             }
+            onListenerAttached(listener)
         }
     }
     

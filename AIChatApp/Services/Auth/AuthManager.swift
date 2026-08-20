@@ -5,7 +5,7 @@
 //  Created by Chiraphat Techasiri on 8/1/26.
 //
 
-import Foundation 
+import Foundation
 
 @MainActor
 @Observable
@@ -14,6 +14,10 @@ class AuthManager {
     private let service: AuthService
     private var listener: (any NSObjectProtocol)?
     private(set) var auth: UserAuthInfo?
+    
+    enum AuthError: Error {
+        case notSignedIn
+    }
     
     init(service: AuthService) {
         self.service = service
@@ -57,9 +61,5 @@ class AuthManager {
     func deleteAccount() async throws {
         try await service.deleteAccount()
         auth = nil
-    }
-    
-    enum AuthError: Error {
-        case notSignedIn
     }
 }

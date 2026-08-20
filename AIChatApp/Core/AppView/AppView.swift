@@ -59,6 +59,7 @@ struct AppView: View {
                 
                 // login to the app
                 try await userManager.loginIn(auth: result.user, isNewUser: true)
+                
             } catch {
                 print("Failed to sign in anonymously and login: \(error)")
                 try? await Task.sleep(for: .seconds(5))
@@ -70,8 +71,12 @@ struct AppView: View {
 
 #Preview("AppView - Tabbar") {
     AppView(appState: AppState())
+        .environment(AuthManager(service: MockAuthService(user: .mock())))
+        .environment(UserManager(services: MockUserServices(currentUser: .mock)))
 }
 
 #Preview("AppView - Onboarding") {
     AppView(appState: AppState())
+        .environment(AuthManager(service: MockAuthService(user: nil)))
+        .environment(UserManager(services: MockUserServices(currentUser: nil)))
 }

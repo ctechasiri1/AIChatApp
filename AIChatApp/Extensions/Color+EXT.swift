@@ -5,67 +5,56 @@
 //  Created by Chiraphat Techasiri on 7/1/26.
 //
 
-import Foundation
 import SwiftUI
+public extension Color {
 
-extension Color {
-    
-    /// Creates a Color from a hex string, e.g. "#FF5733", "FF5733", "#F53", or with alpha "#FF5733AA"
     init(hex: String) {
-        var hexString = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexString = hexString.replacingOccurrences(of: "#", with: "")
-
-        var rgbValue: UInt64 = 0
-        Scanner(string: hexString).scanHexInt64(&rgbValue)
-
-        let red, green, blue, alpha: Double
-
-        switch hexString.count {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let alpha, red, green, blue: UInt64
+        switch hex.count {
         case 3: // RGB (12-bit)
-            red = Double((rgbValue >> 8) & 0xF) / 15.0
-            green = Double((rgbValue >> 4) & 0xF) / 15.0
-            blue = Double(rgbValue & 0xF) / 15.0
-            alpha = 1.0
+            (alpha, red, green, blue) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
         case 6: // RGB (24-bit)
-            red = Double((rgbValue >> 16) & 0xFF) / 255.0
-            green = Double((rgbValue >> 8) & 0xFF) / 255.0
-            blue = Double(rgbValue & 0xFF) / 255.0
-            alpha = 1.0
-        case 8: // RGBA (32-bit)
-            red = Double((rgbValue >> 24) & 0xFF) / 255.0
-            green = Double((rgbValue >> 16) & 0xFF) / 255.0
-            blue = Double((rgbValue >> 8) & 0xFF) / 255.0
-            alpha = Double(rgbValue & 0xFF) / 255.0
+            (alpha, red, green, blue) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (alpha, red, green, blue) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
-            red = 0
-            green = 0
-            blue = 0
-            alpha = 1.0
+            (alpha, red, green, blue) = (255, 0, 0, 0)
         }
 
-        self.init(red: red, green: green, blue: blue, opacity: alpha)
+        self.init(.sRGB, red: Double(red) / 255, green: Double(green) / 255, blue: Double(blue) / 255, opacity: Double(alpha) / 255)
     }
 
-    /// Converts the Color to a hex string, e.g. "#FF5733" or "#FF5733AA" if includeAlpha is true
-    func toHex(includeAlpha: Bool = false) -> String {
+    func asHex(alpha: Bool = false) -> String {
+        // Convert Color to UIColor
         let uiColor = UIColor(self)
 
         var red: CGFloat = 0
         var green: CGFloat = 0
         var blue: CGFloat = 0
-        var alpha: CGFloat = 0
+        var alphaValue: CGFloat = 0
 
-        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        // Use guard to ensure all components can be extracted
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alphaValue) else {
+            // Return a default color (black or transparent) if unable to extract components
+            return alpha ? "#00000000": "#000000"
+        }
 
-        let rInt = Int(round(red * 255))
-        let gInt = Int(round(green * 255))
-        let bInt = Int(round(blue * 255))
-        let aInt = Int(round(alpha * 255))
-
-        if includeAlpha {
-            return String(format: "#%02X%02X%02X%02X", rInt, gInt, bInt, aInt)
+        if alpha {
+            // Include alpha component in the hex string
+            return String(format: "#%02lX%02lX%02lX%02lX",
+                          lroundf(Float(alphaValue) * 255),
+                          lroundf(Float(red) * 255),
+                          lroundf(Float(green) * 255),
+                          lroundf(Float(blue) * 255))
         } else {
-            return String(format: "#%02X%02X%02X", rInt, gInt, bInt)
+            // Exclude alpha component from the hex string
+            return String(format: "#%02lX%02lX%02lX",
+                          lroundf(Float(red) * 255),
+                          lroundf(Float(green) * 255),
+                          lroundf(Float(blue) * 255))
         }
     }
 }

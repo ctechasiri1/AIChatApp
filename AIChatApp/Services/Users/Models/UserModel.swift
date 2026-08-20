@@ -33,6 +33,7 @@ struct UserModel: Codable {
         self.email = email
         self.isAnonymous = isAnonymous
         self.creationDate = creationDate
+        self.creationVersion = creationVersion
         self.lastSignInDate = lastSignInDate
         self.didCompleteOnboarding = didCompleteOnboarding
         self.profileColorHex = profileColorHex
@@ -88,12 +89,6 @@ struct UserModel: Codable {
                 creationDate: Date().addingTimeInterval(-86_400 * 30),
                 didCompleteOnboarding: nil,
                 profileColorHex: nil
-            ),
-            UserModel(
-                userId: "user4",
-                dateCreated: nil,
-                didCompleteOnboarding: true,
-                profileColorHex: "#2ECC71"
             )
         ]
     }

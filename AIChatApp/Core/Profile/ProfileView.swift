@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(UserManager.self) var userManager
     
     @State var path: [NavigationPathOption] = []
     
-    @State private var currentUser: UserModel = .mock
+    @State private var currentUser: UserModel?
     @State private var myAvatars: [AvatarModel] = []
     @State private var showSettingsView: Bool = false
     @State private var showCreateAvatarView: Bool = false
@@ -28,7 +29,7 @@ struct ProfileView: View {
             )
             .navigationDestinationForCore(path: $path)
             .task {
-                await getData()
+                await loadData()
             }
             .toolbar {
                 ToolbarItem(
@@ -52,7 +53,7 @@ struct ProfileView: View {
         Section {
             ZStack {
                 Circle()
-                    .fill(currentUser.profileColorCalculated)
+                    .fill(currentUser?.profileColorCalculated ?? .accent)
             }
             .frame(width: 100, height: 100)
             .frame(maxWidth: .infinity)
@@ -115,7 +116,8 @@ struct ProfileView: View {
             }
     }
     
-    private func getData() async {
+    private func loadData() async {
+        self.currentUser = userManager.currentUser
         try? await Task.sleep(for: .seconds(3))
         isLoading = false
         myAvatars = AvatarModel.mocks
@@ -142,4 +144,5 @@ struct ProfileView: View {
 #Preview {
     ProfileView()
         .environment(AppState())
+        .environment(UserManager(services: MockUserServices(currentUser: .mock)))
 }

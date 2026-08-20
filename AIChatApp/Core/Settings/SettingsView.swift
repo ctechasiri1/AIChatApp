@@ -11,6 +11,7 @@ import SwiftfulUtilities
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     @Environment(AppState.self) private var appState
     
     @State private var isPremium: Bool = false
@@ -133,6 +134,7 @@ struct SettingsView: View {
         Task {
             do {
                 try authManager.signOut()
+                try userManager.signOut()
                 await dismissScreen()
             } catch {
                 showAlert = AnyAppAlert(error: error)
@@ -172,6 +174,7 @@ struct SettingsView: View {
     func onDeleteAccountConfirmed() {
         Task {
             do {
+                try await userManager.deleteCurrentUser()
                 try await authManager.deleteAccount()
                 await dismissScreen()
             } catch {
@@ -193,18 +196,21 @@ fileprivate extension View {
 
 #Preview("Not Authenthicated") {
     SettingsView()
-        .environment(AuthManager(service: MockAuthService(user: nil)))
         .environment(AppState())
+        .environment(AuthManager(service: MockAuthService(user: nil)))
+        .environment(UserManager(services: MockUserServices(currentUser: nil)))
 }
 
 #Preview("Anonymous") {
     SettingsView()
-        .environment(AuthManager(service: MockAuthService(user: UserAuthInfo.mock(isAnonymous: true))))
         .environment(AppState())
+        .environment(AuthManager(service: MockAuthService(user: UserAuthInfo.mock(isAnonymous: true))))
+        .environment(UserManager(services: MockUserServices(currentUser: .mock)))
 }
 
 #Preview("Not Anonymous") {
     SettingsView()
-        .environment(AuthManager(service: MockAuthService(user: UserAuthInfo.mock(isAnonymous: false))))
         .environment(AppState())
+        .environment(AuthManager(service: MockAuthService(user: UserAuthInfo.mock(isAnonymous: false))))
+        .environment(UserManager(services: MockUserServices(currentUser: .mock)))
 }

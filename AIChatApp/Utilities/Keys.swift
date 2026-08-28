@@ -8,5 +8,5 @@
 import Foundation
 
 struct Keys {
-    static let openAI: String = ""
+    static let openAI: String = "here_is_my_key"
 }

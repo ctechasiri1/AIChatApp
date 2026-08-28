@@ -72,7 +72,7 @@ struct AvatarDescriptionHandler {
         self.characterLocation = avatar.characterLocation ?? .default
     }
     
-    var characteDescription: String {
+    var characterDescription: String {
         let prefix =  characterOption.startsWithVowel ? "An" : "A"
         return "\(prefix) \(characterOption.rawValue) that is \(characterAction.rawValue) in the \(characterLocation.rawValue)"
     }

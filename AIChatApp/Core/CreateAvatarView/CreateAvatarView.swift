@@ -9,14 +9,15 @@ import SwiftUI
 
 struct CreateAvatarView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AIManager.self) private var aiManager
     
     @State private var avatarName: String = ""
     @State private var generatedImage: UIImage?
     @State private var isGenerating: Bool = false
     @State private var isLoading: Bool = false
-    @State private var characterOption: CharacterOption? = .default
-    @State private var characterAction: CharacterAction? = .default
-    @State private var characterLocation: CharacterLocation? = .default
+    @State private var characterOption: CharacterOption = .default
+    @State private var characterAction: CharacterAction = .default
+    @State private var characterLocation: CharacterLocation = .default
     
     var body: some View {
         NavigationStack {
@@ -124,8 +125,16 @@ struct CreateAvatarView: View {
         isGenerating = true
         
         Task {
-            try? await Task.sleep(for: .seconds(3))
-            generatedImage = UIImage(systemName: "figure")
+            do {
+                let query = AvatarDescriptionHandler(
+                    characterOption: characterOption,
+                    characterAction: characterAction,
+                    characterLocation: characterLocation)
+                    .characterDescription
+                generatedImage = try await aiManager.generateImage(from: query)
+            } catch {
+                print(error.localizedDescription)
+            }
             isGenerating = false
         }
     }
@@ -143,4 +152,5 @@ struct CreateAvatarView: View {
 
 #Preview {
     CreateAvatarView()
+        .environment(AIManager(service: MockAIService()))
 }

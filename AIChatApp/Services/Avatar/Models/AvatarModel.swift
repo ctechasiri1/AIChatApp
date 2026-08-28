@@ -38,7 +38,7 @@ struct AvatarModel: Hashable {
     }
     
     var characterDescription: String {
-        AvatarDescriptionHandler(avatar: AvatarModel.mock).characteDescription
+        AvatarDescriptionHandler(avatar: AvatarModel.mock).characterDescription
     }
     
     static var mock: Self {

@@ -5,7 +5,6 @@
 //  Created by Chiraphat Techasiri on 8/19/26.
 //
 
-
 protocol RemoteUserService: Sendable {
     func saveUser(user: UserModel) async throws
     func streamUser(userId: String) -> AsyncThrowingStream<UserModel, Error>

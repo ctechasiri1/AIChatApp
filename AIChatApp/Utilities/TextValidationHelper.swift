@@ -22,9 +22,7 @@ struct TextValidationHelper {
         }
     }
     
-    static func checkIfTextIsValid(text: String) throws {
-        let minimumTextCount: Int = 4
-        
+    static func checkIfTextIsValid(text: String, minimumTextCount: Int = 4) throws {
         guard text.count >= minimumTextCount else {
             throw TextValidationError.notEnoughCharacters(min: minimumTextCount)
         }

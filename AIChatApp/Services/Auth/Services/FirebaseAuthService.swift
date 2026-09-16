@@ -50,7 +50,7 @@ struct FirebaseAuthService: AuthService {
     }
     
     func signInApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        let helper = SignInWithAppleHelper()
+        let helper = await SignInWithAppleHelper()
         let response = try await helper.signIn()
         
         let credential = OAuthProvider.credential(

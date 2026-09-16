@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 @Observable
+@MainActor
 class AIManager {
     private let service: AIService
     

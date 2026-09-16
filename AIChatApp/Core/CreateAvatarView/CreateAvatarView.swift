@@ -10,11 +10,16 @@ import SwiftUI
 struct CreateAvatarView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AIManager.self) private var aiManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(AvatarManager.self) private var avatarManager
     
     @State private var avatarName: String = ""
     @State private var generatedImage: UIImage?
     @State private var isGenerating: Bool = false
+    
     @State private var isLoading: Bool = false
+    @State private var showAlert: AnyAppAlert?
+    
     @State private var characterOption: CharacterOption = .default
     @State private var characterAction: CharacterAction = .default
     @State private var characterLocation: CharacterLocation = .default
@@ -140,12 +145,33 @@ struct CreateAvatarView: View {
     }
     
     private func onSavedPressed() {
+        guard let generatedImage else { return }
+        
         isLoading = true
         Task {
-            try? await Task.sleep(for: .seconds(3))
-            generatedImage = UIImage(systemName: "figure")
+            do {
+                try TextValidationHelper.checkIfTextIsValid(text: avatarName, minimumTextCount: 3)
+                
+                let uid = try authManager.getAuthId()
+                
+                let avatar = AvatarModel(
+                    avatarId: UUID().uuidString,
+                    name: avatarName,
+                    characterOption: characterOption,
+                    characterAction: characterAction,
+                    characterLocation: characterLocation,
+                    profileImageName: nil,
+                    authorId: uid,
+                    dateCreated: .now
+                )
+                
+                try await avatarManager.createAvatar(avatar: avatar, image: generatedImage)
+    
+                dismiss()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
             isLoading = false
-            dismiss()
         }
     }
 }
@@ -153,4 +179,5 @@ struct CreateAvatarView: View {
 #Preview {
     CreateAvatarView()
         .environment(AIManager(service: MockAIService()))
+        .environment(AuthManager(service: MockAuthService()))
 }

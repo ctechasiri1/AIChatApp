@@ -13,6 +13,7 @@
 		519A1A97300AC11700CCAC3D /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 519A1A96300AC11700CCAC3D /* SignInAppleAsync */; };
 		51CE329530083DFB0079F944 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 51CE329430083DFB0079F944 /* FirebaseAuth */; };
 		51DBB7E1301EF1890062689A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 51DBB7E0301EF1890062689A /* FirebaseFirestore */; };
+		51E90AA73056913A0059F9FE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 51E90AA63056913A0059F9FE /* FirebaseStorage */; };
 		51F71E54303416A800D6FE1C /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 51F71E53303416A800D6FE1C /* SwiftfulFirestore */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,7 @@
 				51F71E54303416A800D6FE1C /* SwiftfulFirestore in Frameworks */,
 				51CE329530083DFB0079F944 /* FirebaseAuth in Frameworks */,
 				518879EC3041501400EBAEA3 /* OpenAI in Frameworks */,
+				51E90AA73056913A0059F9FE /* FirebaseStorage in Frameworks */,
 				51DBB7E1301EF1890062689A /* FirebaseFirestore in Frameworks */,
 				5111E8CD2FF87CE300E797C8 /* SwiftfulUtilities in Frameworks */,
 			);
@@ -145,6 +147,7 @@
 				51DBB7E0301EF1890062689A /* FirebaseFirestore */,
 				51F71E53303416A800D6FE1C /* SwiftfulFirestore */,
 				518879EB3041501400EBAEA3 /* OpenAI */,
+				51E90AA63056913A0059F9FE /* FirebaseStorage */,
 			);
 			productName = AIChatApp;
 			productReference = 5144A4792FD7CC8100B53A76 /* AIChatApp.app */;
@@ -485,7 +488,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -526,7 +529,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -740,6 +743,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51CE329330083DFB0079F944 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		51E90AA63056913A0059F9FE /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51CE329330083DFB0079F944 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		51F71E53303416A800D6FE1C /* SwiftfulFirestore */ = {
 			isa = XCSwiftPackageProductDependency;

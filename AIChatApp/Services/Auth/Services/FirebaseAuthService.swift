@@ -6,7 +6,6 @@
 //
 
 import FirebaseAuth
-import Foundation
 import SwiftUI
 import SignInAppleAsync
 
@@ -45,7 +44,6 @@ struct FirebaseAuthService: AuthService {
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         let result = try await Auth.auth().signInAnonymously()
-        
         return result.asUserAuthInfo
     }
     

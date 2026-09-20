@@ -39,16 +39,12 @@ struct OnboardingCompletedView: View {
     func onFinishButtonPressed() {
         isCompletingProfileSetup = true
         Task {
-            do {
-                let hex = selectedColor.asHex()
-                try await userManager.markOnboardingCompleteCurrentUser(profileColorHex: hex)
-                
-                // dismiss the screen
-                isCompletingProfileSetup = false
-                appState.updateViewState(showTabBarView: true)
-            } catch {
-                
-            }
+            let hex = selectedColor.asHex()
+            try await userManager.markOnboardingCompleteCurrentUser(profileColorHex: hex)
+            
+            // dismiss the screen
+            isCompletingProfileSetup = false
+            appState.updateViewState(showTabBarView: true)
         }
     }
 }

@@ -5,9 +5,14 @@
 //  Created by Chiraphat Techasiri on 6/19/26.
 //
 
+import IdentifiableByString
 import Foundation
 
-struct AvatarModel: Hashable, Codable, Sendable {
+struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
+    var id: String {
+        avatarId
+    }
+    
     let avatarId: String
     let name: String?
     let characterOption: CharacterOption?

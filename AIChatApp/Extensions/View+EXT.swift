@@ -51,6 +51,21 @@ extension View {
         )
     }
     
+    func navigationDestinationForCore(path: Binding<[NavigationPathOption]>) -> some View {
+        self
+            .navigationDestination(for: NavigationPathOption.self) { value in
+                switch value {
+                case .chat(avatarId: let avatarId):
+                    ChatView(avatarId: avatarId)
+                case .category(
+                    category: let category,
+                    imageName: let imageName
+                ):
+                    CategoryListView(path: path, category: category, imageName: imageName)
+                }
+            }
+    }
+    
     /// this should be the last option for anything, there probably is a better way to do this
     @ViewBuilder
     func ifForceTransitionAnimation(for condition: Bool, content: (Self) -> some View) -> some View {

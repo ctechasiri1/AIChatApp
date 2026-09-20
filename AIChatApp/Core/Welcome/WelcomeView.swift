@@ -97,7 +97,10 @@ struct WelcomeView: View {
     }
     
     private func handleDidSignIn(isNewUser: Bool) {
-        if !isNewUser {
+        if isNewUser {
+            // Do nothing, user goes through onboarding
+        } else {
+            // Push into tabbar view
             appState.updateViewState(showTabBarView: true)
         }
     }

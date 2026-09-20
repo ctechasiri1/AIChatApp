@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @Environment(UserManager.self) var userManager
+    @Environment(UserManager.self) private var userManager
+    @Environment(AvatarManager.self) private var avatarManager
+    @Environment(AuthManager.self) private var authManager
     
     @State var path: [NavigationPathOption] = []
     
@@ -118,9 +120,13 @@ struct ProfileView: View {
     
     private func loadData() async {
         self.currentUser = userManager.currentUser
-        try? await Task.sleep(for: .seconds(3))
+        do {
+            let uid = try authManager.getAuthId()
+            myAvatars = try await avatarManager.getAvatarForAuthor(userId: uid)
+        } catch {
+            print("Failed to fetch user avatars.")
+        }
         isLoading = false
-        myAvatars = AvatarModel.mocks
     }
     
     private func onDeleteAvatar(indexSet: IndexSet) {
@@ -145,4 +151,5 @@ struct ProfileView: View {
     ProfileView()
         .environment(AppState())
         .environment(UserManager(services: MockUserServices(currentUser: .mock)))
+        .environment(AvatarManager(service: MockAvatarService()))
 }

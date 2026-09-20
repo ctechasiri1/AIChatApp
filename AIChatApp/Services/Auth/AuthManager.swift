@@ -12,8 +12,8 @@ import Foundation
 class AuthManager {
     
     private let service: AuthService
-    private var listener: (any NSObjectProtocol)?
     private(set) var auth: UserAuthInfo?
+    private var listener: (any NSObjectProtocol)?
     
     enum AuthError: Error {
         case notSignedIn
@@ -23,7 +23,6 @@ class AuthManager {
         self.service = service
         self.auth = service.getAuthenticatedUser()
         self.addAuthListener()
-        
     }
     
     private func addAuthListener() {

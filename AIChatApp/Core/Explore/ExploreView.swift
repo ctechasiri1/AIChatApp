@@ -12,41 +12,66 @@ enum NavigationPathOption: Hashable {
     case category(category: CharacterOption, imageName: String)
 }
 
-extension View {
-    func navigationDestinationForCore(path: Binding<[NavigationPathOption]>) -> some View {
-        self
-            .navigationDestination(for: NavigationPathOption.self) { value in
-                switch value {
-                case .chat(avatarId: let avatarId):
-                    ChatView(avatarId: avatarId)
-                case .category(
-                    category: let category,
-                    imageName: let imageName
-                ):
-                    CategoryListView(path: path, category: category, imageName: imageName)
-                }
-            }
-    }
-}
-
 struct ExploreView: View {
+    @Environment(AvatarManager.self) private var avatarManager
     
     @State var path: [NavigationPathOption] = []
     
-    @State private var avatars: [AvatarModel] = AvatarModel.mocks
+    @State private var avatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
-    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var popularAvatars: [AvatarModel] = []
+    @State private var isLoading: Bool = true
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                featureSection
-                categorySection
-                popularSection
+                if avatars.isEmpty && isLoading {
+                    ProgressView()
+                        .padding(40)
+                        .frame(maxWidth: .infinity)
+                        .removeListRowFormatting()
+                }
+                
+                if !avatars.isEmpty {
+                    featureSection
+                }
+                
+                if !categories.isEmpty {
+                    categorySection
+                    popularSection
+                }
             }
             .navigationTitle("Explore")
             .navigationDestinationForCore(path: $path)
         }
+        .task {
+            await loadPopularAvatars()
+        }
+        .task {
+            await loadFeaturedAvatars()
+        }
+    }
+    
+    private func loadFeaturedAvatars() async {
+        guard avatars.isEmpty else { return }
+        
+        do {
+            avatars = try await avatarManager.getFeaturedAvatars()
+        } catch {
+            print("Error loading featured avatars: \(error)")
+        }
+        isLoading = false
+    }
+    
+    private func loadPopularAvatars() async {
+        guard popularAvatars.isEmpty else { return }
+        
+        do {
+            popularAvatars = try await avatarManager.getPopularAvatars()
+        } catch {
+            print("Error loading popular avatars: \(error)")
+        }
+        isLoading = false
     }
     
     private var featureSection: some View {
@@ -77,7 +102,7 @@ struct ExploreView: View {
                         if let imageName {
                             CategoryCellView(
                                 title: category.pural.capitalized,
-                                imageName: Constants.randomImage
+                                imageName: imageName
                             )
                             .anyButton {
                                 onCategoryPressed(category: category, imageName: imageName)
@@ -100,6 +125,7 @@ struct ExploreView: View {
         Section {
             ForEach(popularAvatars, id: \.self) { avatar in
                 CustomListCellView(
+                    imageName: avatar.profileImageName,
                     title: avatar.name,
                     description: avatar.characterDescription
                 )
@@ -124,4 +150,5 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
+        .environment(AvatarManager(service: MockAvatarService()))
 }

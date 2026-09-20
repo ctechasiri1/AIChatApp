@@ -29,8 +29,8 @@ struct AppView: View {
         }
         // logout or delete account will trigger change from tab view to welcome view which will generate a new anonymous id
         .onChange(of: appState.showTabBar) { _, showTabBar in
-            Task {
-                if !showTabBar {
+            if !showTabBar {
+                Task {
                     await checkUserStatus()
                 }
             }
@@ -58,7 +58,7 @@ struct AppView: View {
                 print("The account has been created: \(result.user.uid)")
                 
                 // login to the app
-                try await userManager.loginIn(auth: result.user, isNewUser: true)
+                try await userManager.loginIn(auth: result.user, isNewUser: result.isNewUser)
                 
             } catch {
                 print("Failed to sign in anonymously and login: \(error)")
@@ -70,13 +70,13 @@ struct AppView: View {
 }
 
 #Preview("AppView - Tabbar") {
-    AppView(appState: AppState())
+    AppView(appState: AppState(showTabBar: true))
         .environment(AuthManager(service: MockAuthService(user: .mock())))
         .environment(UserManager(services: MockUserServices(currentUser: .mock)))
 }
 
 #Preview("AppView - Onboarding") {
-    AppView(appState: AppState())
+    AppView(appState: AppState(showTabBar: false))
         .environment(AuthManager(service: MockAuthService(user: nil)))
         .environment(UserManager(services: MockUserServices(currentUser: nil)))
 }

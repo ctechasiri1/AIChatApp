@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct ChatsView: View {
+    @Environment(AvatarManager.self) private var avatarManager
     
     @State var path: [NavigationPathOption] = []
     
     @State private var chats: [ChatModel] = ChatModel.mocks
-    @State private var avatar: [AvatarModel] = AvatarModel.mocks
+    @State private var avatars: [AvatarModel] = []
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -25,6 +26,17 @@ struct ChatsView: View {
             }
             .navigationTitle("Chats")
             .navigationDestinationForCore(path: $path)
+        }
+        .onAppear {
+            loadRecentAvatars()
+        }
+    }
+    
+    private func loadRecentAvatars() {
+        do {
+            avatars = try avatarManager.getRecentAvatars()
+        } catch {
+            print("Failed to load recents.")
         }
     }
     
@@ -67,7 +79,7 @@ struct ChatsView: View {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
-                    ForEach(avatar, id: \.self) { avatar in
+                    ForEach(avatars, id: \.self) { avatar in
                         VStack(spacing: 8) {
                             if let imageName = avatar.profileImageName {
                                 ImageLoaderView(urlString: imageName)
@@ -102,4 +114,5 @@ struct ChatsView: View {
 
 #Preview {
     ChatsView()
+        .environment(AvatarManager(remote: MockAvatarService()))
 }

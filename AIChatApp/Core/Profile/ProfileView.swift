@@ -29,7 +29,7 @@ struct ProfileView: View {
             .navigationTitle(
                 "Profile"
             )
-            .navigationDestinationForCore(path: $path)
+            .navigationDestinationForCoreModule(path: $path)
             .task {
                 await loadData()
             }
@@ -151,5 +151,5 @@ struct ProfileView: View {
     ProfileView()
         .environment(AppState())
         .environment(UserManager(services: MockUserServices(currentUser: .mock)))
-        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AvatarManager(remote: MockAvatarService()))
 }

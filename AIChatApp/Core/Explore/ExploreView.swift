@@ -42,7 +42,7 @@ struct ExploreView: View {
                 }
             }
             .navigationTitle("Explore")
-            .navigationDestinationForCore(path: $path)
+            .navigationDestinationForCoreModule(path: $path)
         }
         .task {
             await loadPopularAvatars()
@@ -150,5 +150,5 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
-        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AvatarManager(remote: MockAvatarService()))
 }

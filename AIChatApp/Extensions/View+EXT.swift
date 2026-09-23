@@ -51,16 +51,13 @@ extension View {
         )
     }
     
-    func navigationDestinationForCore(path: Binding<[NavigationPathOption]>) -> some View {
+    func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
         self
             .navigationDestination(for: NavigationPathOption.self) { value in
                 switch value {
                 case .chat(avatarId: let avatarId):
                     ChatView(avatarId: avatarId)
-                case .category(
-                    category: let category,
-                    imageName: let imageName
-                ):
+                case .category(category: let category, imageName: let imageName):
                     CategoryListView(path: path, category: category, imageName: imageName)
                 }
             }

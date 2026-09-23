@@ -11,7 +11,7 @@ struct ChatView: View {
     @Environment(AvatarManager.self) private var avatarManager
     
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
-    @State private var avatar: AvatarModel? = .mock
+    @State private var avatar: AvatarModel?
     @State private var currentUser: UserModel? = .mock
     
     @State private var textFieldText: String = ""
@@ -38,18 +38,17 @@ struct ChatView: View {
                     .anyButton {
                         onShowChatSettingsPressed()
                     }
-                    .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings
-                    )
             }
         }
         .showCustomAlert(alert: $showAlert)
+        .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         // MARK: There is a bug with overlay where nav bar is always the highest level view
         .showModal(for: $showProfileModal) {
             if let avatar {
                 profileModal(avatar: avatar)
             }
         }
-        task {
+        .task {
             await loadAvatar()
         }
     }

@@ -12,29 +12,29 @@ struct ChatsView: View {
     
     @State var path: [NavigationPathOption] = []
     
-    @State private var chats: [ChatModel] = ChatModel.mocks
-    @State private var avatars: [AvatarModel] = []
+    @State private var chats: [ChatModel] = []
+    @State private var recentAvatars: [AvatarModel] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                if !chats.isEmpty {
+                if !recentAvatars.isEmpty {
                     recentsSection
                 }
                 
                 chatsSection
             }
             .navigationTitle("Chats")
-            .navigationDestinationForCore(path: $path)
-        }
-        .onAppear {
-            loadRecentAvatars()
+            .navigationDestinationForCoreModule(path: $path)
+            .onAppear {
+                loadRecentAvatars()
+            }
         }
     }
     
     private func loadRecentAvatars() {
         do {
-            avatars = try avatarManager.getRecentAvatars()
+            recentAvatars = try avatarManager.getRecentAvatars()
         } catch {
             print("Failed to load recents.")
         }
@@ -79,7 +79,7 @@ struct ChatsView: View {
         Section {
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 8) {
-                    ForEach(avatars, id: \.self) { avatar in
+                    ForEach(recentAvatars, id: \.self) { avatar in
                         VStack(spacing: 8) {
                             if let imageName = avatar.profileImageName {
                                 ImageLoaderView(urlString: imageName)

@@ -50,7 +50,6 @@ struct CategoryListView: View {
         }
         .ignoresSafeArea()
         .listStyle(PlainListStyle())
-        .navigationDestinationForCore(path: $path)
         .showCustomAlert(alert: $showAlert)
         .task {
             await loadAvatars()
@@ -75,5 +74,5 @@ struct CategoryListView: View {
     @State @Previewable var path: [NavigationPathOption] = []
     
     CategoryListView(path: $path)
-        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AvatarManager(remote: MockAvatarService()))
 }

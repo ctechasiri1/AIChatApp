@@ -28,10 +28,16 @@ struct CategoryListView: View {
             )
             .removeListRowFormatting()
             
-            if avatars.isEmpty && isLoading {
+            if isLoading {
                 ProgressView()
                     .padding(40)
                     .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .removeListRowFormatting()
+            } else if avatars.isEmpty {
+                Text("There are no avatars found")
+                    .frame(maxWidth: .infinity)
+                    .padding(40)
                     .listRowSeparator(.hidden)
                     .removeListRowFormatting()
             } else {
@@ -70,9 +76,30 @@ struct CategoryListView: View {
     }
 }
 
-#Preview {
+#Preview("Mock Data") {
     @State @Previewable var path: [NavigationPathOption] = []
     
     CategoryListView(path: $path)
         .environment(AvatarManager(remote: MockAvatarService()))
+}
+
+#Preview("Empty State") {
+    @State @Previewable var path: [NavigationPathOption] = []
+    
+    CategoryListView(path: $path)
+        .environment(AvatarManager(remote: MockAvatarService(avatars: [], delay: 2)))
+}
+
+#Preview("Test Loader") {
+    @State @Previewable var path: [NavigationPathOption] = []
+    
+    CategoryListView(path: $path)
+        .environment(AvatarManager(remote: MockAvatarService(delay: 5)))
+}
+
+#Preview("Show Error Modal") {
+    @State @Previewable var path: [NavigationPathOption] = []
+    
+    CategoryListView(path: $path)
+        .environment(AvatarManager(remote: MockAvatarService(delay: 2, showError: true)))
 }

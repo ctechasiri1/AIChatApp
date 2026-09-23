@@ -17,26 +17,33 @@ struct ExploreView: View {
     
     @State var path: [NavigationPathOption] = []
     
-    @State private var avatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
+    
+    @State private var featuredAvatars: [AvatarModel] = []
     @State private var popularAvatars: [AvatarModel] = []
-    @State private var isLoading: Bool = true
+    
+    @State private var isLoadingPopular: Bool = true
+    @State private var isLoadingFeatured: Bool = true
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                if avatars.isEmpty && isLoading {
-                    ProgressView()
-                        .padding(40)
-                        .frame(maxWidth: .infinity)
-                        .removeListRowFormatting()
+                if featuredAvatars.isEmpty && popularAvatars.isEmpty {
+                    ZStack {
+                        if isLoadingPopular || isLoadingFeatured {
+                            loadingIndicator
+                        } else {
+                            errorMessageView
+                        }
+                    }
+                    .removeListRowFormatting()
                 }
                 
-                if !avatars.isEmpty {
+                if !featuredAvatars.isEmpty {
                     featureSection
                 }
                 
-                if !categories.isEmpty {
+                if !popularAvatars.isEmpty {
                     categorySection
                     popularSection
                 }
@@ -53,30 +60,67 @@ struct ExploreView: View {
     }
     
     private func loadFeaturedAvatars() async {
-        guard avatars.isEmpty else { return }
+        guard featuredAvatars.isEmpty else { return }
         
         do {
-            avatars = try await avatarManager.getFeaturedAvatars()
+            featuredAvatars = try await avatarManager.getFeaturedAvatars()
         } catch {
             print("Error loading featured avatars: \(error)")
         }
-        isLoading = false
+        isLoadingFeatured = false
     }
     
     private func loadPopularAvatars() async {
         guard popularAvatars.isEmpty else { return }
-        
+    
         do {
             popularAvatars = try await avatarManager.getPopularAvatars()
         } catch {
             print("Error loading popular avatars: \(error)")
         }
-        isLoading = false
+        isLoadingPopular = false
+    }
+    
+    private func onTryAgainPressed() {
+        isLoadingPopular = true
+        isLoadingFeatured = true
+        
+        Task {
+            await loadPopularAvatars()
+        }
+        Task {
+            await loadFeaturedAvatars()
+        }
+    }
+    
+    private var loadingIndicator: some View {
+        ProgressView()
+            .padding(40)
+            .frame(maxWidth: .infinity)
+            .removeListRowFormatting()
+    }
+    
+    private var errorMessageView: some View {
+        VStack(alignment: .center, spacing: 20) {
+            Text("Error")
+                .font(.headline)
+            
+            Text("Please check your internet connection and try again")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            
+            Button("Try Again") {
+                onTryAgainPressed()
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .multilineTextAlignment(.center)
+        .padding(40)
     }
     
     private var featureSection: some View {
         Section {
-            CarouselView(items: avatars) { avatar in
+            CarouselView(items: featuredAvatars) { avatar in
                 HeroCellView(
                     title: avatar.name,
                     subtitle: avatar.characterDescription,
@@ -148,7 +192,17 @@ struct ExploreView: View {
     }
 }
 
-#Preview {
+#Preview("Mock Data") {
     ExploreView()
         .environment(AvatarManager(remote: MockAvatarService()))
+}
+
+#Preview("Empty State") {
+    ExploreView()
+        .environment(AvatarManager(remote: MockAvatarService(avatars: [], delay: 2)))
+}
+
+#Preview("Test Loader") {
+    ExploreView()
+        .environment(AvatarManager(remote: MockAvatarService(delay: 5)))
 }

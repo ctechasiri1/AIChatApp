@@ -49,7 +49,8 @@ class AvatarManager {
         try local.getRecentAvatars()
     }
     
-    func addRecentActivity(avatar: AvatarModel) throws {
+    func addRecentActivity(avatar: AvatarModel) async throws {
+        try await remote.incrementAvatarClickCount(avatarId: avatar.id)
         try local.addRecentActivity(avatar: avatar)
     }
 }

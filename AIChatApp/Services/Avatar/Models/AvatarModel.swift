@@ -21,6 +21,7 @@ struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
     private(set) var profileImageName: String?
     let authorId: String?
     let dateCreated: Date?
+    let clickCount: Int?
     
     init(
         avatarId: String,
@@ -30,7 +31,8 @@ struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
         characterLocation: CharacterLocation? = nil,
         profileImageName: String? = nil,
         authorId: String? = nil,
-        dateCreated: Date? = nil
+        dateCreated: Date? = nil,
+        clickCount: Int? = nil
     ) {
         self.avatarId = avatarId
         self.name = name
@@ -40,6 +42,7 @@ struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
         self.profileImageName = profileImageName
         self.authorId = authorId
         self.dateCreated = dateCreated
+        self.clickCount = clickCount
     }
     
     var characterDescription: String {
@@ -59,6 +62,7 @@ struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
         case profileImageName = "profile_image_name"
         case authorId = "author_id"
         case dateCreated = "date_created"
+        case clickCount = "click_count"
     }
     
     static var mock: Self {
@@ -67,10 +71,10 @@ struct AvatarModel: Hashable, Codable, Sendable, StringIdentifiable {
     
     static var mocks: [Self] {
         [
-            AvatarModel(avatarId: UUID().uuidString, name: "Alpha", characterOption: .alien, characterAction: .relaxing, characterLocation: .space, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now),
-            AvatarModel(avatarId: UUID().uuidString, name: "Beta", characterOption: .man, characterAction: .shopping, characterLocation: .mall, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now),
-            AvatarModel(avatarId: UUID().uuidString, name: "Gamma", characterOption: .cat, characterAction: .shopping, characterLocation: .forest, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now),
-            AvatarModel(avatarId: UUID().uuidString, name: "Delta", characterOption: .dog, characterAction: .walking, characterLocation: .museum, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now)
+            AvatarModel(avatarId: UUID().uuidString, name: "Alpha", characterOption: .alien, characterAction: .relaxing, characterLocation: .space, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now, clickCount: 10),
+            AvatarModel(avatarId: UUID().uuidString, name: "Beta", characterOption: .man, characterAction: .shopping, characterLocation: .mall, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now, clickCount: 100),
+            AvatarModel(avatarId: UUID().uuidString, name: "Gamma", characterOption: .cat, characterAction: .shopping, characterLocation: .forest, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now, clickCount: 5),
+            AvatarModel(avatarId: UUID().uuidString, name: "Delta", characterOption: .dog, characterAction: .walking, characterLocation: .museum, profileImageName: Constants.randomImage, authorId: UUID().uuidString, dateCreated: .now, clickCount: 50)
         ]
     }
 }

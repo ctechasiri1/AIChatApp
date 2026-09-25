@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatView: View {
     @Environment(AvatarManager.self) private var avatarManager
+    @Environment(AIManager.self) private var aiManager
     
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
     @State private var avatar: AvatarModel?
@@ -186,4 +187,5 @@ struct ChatView: View {
     NavigationStack {
         ChatView()
     }
+    .previewEnvironment()
 }

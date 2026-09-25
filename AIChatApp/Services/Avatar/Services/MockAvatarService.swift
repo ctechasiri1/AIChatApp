@@ -30,8 +30,6 @@ struct MockAvatarService: RemoteAvatarService {
         try tryShowError()
     }
     
-    func incrementAvatarClickCount(avatarId: String) async throws { }
-    
     func getAvatar(id: String) async throws -> AvatarModel {
         guard let avatar = avatars.first(where: { $0.id == id}) else {
             throw URLError(.unknown)
@@ -73,4 +71,10 @@ struct MockAvatarService: RemoteAvatarService {
         
         return avatars
     }
+    
+    func incrementAvatarClickCount(avatarId: String) async throws { }
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws { }
+    
+    func removeAuthorIdFromAllAvatars(userId: String) async throws { }
 }

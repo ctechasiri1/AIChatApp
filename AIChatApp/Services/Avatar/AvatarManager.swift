@@ -53,4 +53,13 @@ class AvatarManager {
         try await remote.incrementAvatarClickCount(avatarId: avatar.id)
         try local.addRecentActivity(avatar: avatar)
     }
+    
+    func removeAuthorIdFromAvatar(avatarId: String) async throws {
+        try await remote.removeAuthorIdFromAvatar(avatarId: avatarId)
+    }
+    
+    
+    func removeAuthorIdFromAllAvatars(userId: String) async throws {
+        try await remote.removeAuthorIdFromAllAvatars(userId: userId)
+    }
 }

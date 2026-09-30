@@ -14,6 +14,24 @@ struct ChatModel: Identifiable, Codable {
     let dateCreate: Date
     let dateModified: Date
     
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case avatarId = "avatar_id"
+        case dateCreate = "date_create"
+        case dateModified = "date_modified"
+    }
+    
+    static func new(userId: String, avatarId: String) -> Self {
+        ChatModel(
+            id: "\(userId)_\(avatarId)",
+            userId: userId,
+            avatarId: avatarId,
+            dateCreate: .now,
+            dateModified: .now
+        )
+    }
+    
     static var mock: Self {
         mocks[0]
     }

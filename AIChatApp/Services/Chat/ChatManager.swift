@@ -30,7 +30,9 @@ struct MockChatService: ChatService {
 }
 
 
+
 @MainActor
+@Observable
 class ChatManager {
     var service: ChatService
     

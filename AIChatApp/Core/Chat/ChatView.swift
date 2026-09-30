@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct ChatView: View {
+    @Environment(UserManager.self) private var userManager
+    @Environment(ChatManager.self) private var chatManager
     @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(AIManager.self) private var aiManager
     
     @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
     @State private var avatar: AvatarModel?
-    @State private var currentUser: UserModel? = .mock
+    @State private var currentUser: UserModel?
+    @State private var chat: ChatModel?
     
     @State private var textFieldText: String = ""
     @State private var scrollPosition: String?
@@ -53,6 +56,13 @@ struct ChatView: View {
         .task {
             await loadAvatar()
         }
+        .onAppear {
+            loadCurrentUser()
+        }
+    }
+    
+    private func loadCurrentUser() {
+       currentUser = userManager.currentUser
     }
     
     private func loadAvatar() async {
@@ -69,10 +79,11 @@ struct ChatView: View {
         ScrollView {
             LazyVStack {
                 ForEach(chatMessages) { message in
-                    let isCurrentUser = message.authorId == currentUser?.userId
+                    let isCurrentUser = message.authorId == authManager.auth?.uid
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
+                        currentUserBackgroundColor: currentUser?.profileColorCalculated ?? .accent,
                         imageName: isCurrentUser ? nil : avatar?.profileImageName
                     ) {
                         onAvatarImagePressed()
@@ -154,19 +165,21 @@ struct ChatView: View {
     }
     
     private func onSendMessagePressed() async {
-        guard let userId = currentUser?.userId else { return }
-        
         let content = textFieldText
         
         do {
+            let uid = try authManager.getAuthId()
             try TextValidationHelper.checkIfTextIsValid(text: textFieldText)
             
-            let uid = try authManager.getAuthId()
+            if chat == nil {
+                let newChat = try ChatModel.new(userId: uid, avatarId: avatarId)
+                try await chatManager.createNewChat(chat: newChat)
+                chat = newChat
+            }
+            
             let newChatMessage = AIChatModel(role: .user, message: content)
             let chatId = UUID().uuidString
-            
             let message = ChatMessageModel.newUserMessage(chatId: chatId, userId: uid, message: newChatMessage)
-            
             chatMessages.append(message)
             
             scrollPosition = message.id
@@ -174,11 +187,8 @@ struct ChatView: View {
             textFieldText = ""
             
             let aiChats = chatMessages.compactMap({ $0.content })
-            
             let response = try await aiManager.generateText(from: aiChats)
-            
             let newAIMessage = ChatMessageModel.newAIMessage(chatId: chatId, avatarId: avatarId, messsage: response)
-            
             chatMessages.append(newAIMessage)
             
         } catch {

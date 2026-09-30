@@ -21,4 +21,8 @@ class AIManager {
     func generateImage(from input: String) async throws -> UIImage {
         try await service.generateImage(from: input)
     }
+    
+    func generateText(from chats: [AIChatModel]) async throws -> AIChatModel {
+        try await service.generateText(from: chats)
+    }
 }

@@ -100,7 +100,9 @@ struct ChatView: View {
                     .foregroundStyle(.accent)
                     .padding(.trailing, 4)
                     .anyButton {
-                        onSendMessagePressed()
+                        Task {
+                            await onSendMessagePressed()
+                        }
                     }
             })
             .background(
@@ -150,23 +152,46 @@ struct ChatView: View {
         )
     }
     
-    private func onSendMessagePressed() {
+    private func onSendMessagePressed() async {
         guard let userId = currentUser?.userId else { return }
+        
+        let content = textFieldText
         
         do {
             try TextValidationHelper.checkIfTextIsValid(text: textFieldText)
-            let content = textFieldText
+            
+            let newChatMessage = AIChatModel(role: .user, message: content)
+            
             let message = ChatMessageModel(
                 id: UUID().uuidString,
                 chatId: UUID().uuidString,
                 authorId: userId,
-                content: content,
+                content: newChatMessage,
                 seenByIds: nil,
                 dateCreated: .now
             )
+            
             chatMessages.append(message)
+            
             scrollPosition = message.id
+            
             textFieldText = ""
+            
+            let aiChats = chatMessages.compactMap({ $0.content })
+            
+            let response = try await aiManager.generateText(from: aiChats)
+            
+            let newAIMessage = ChatMessageModel(
+                id: UUID().uuidString,
+                chatId: UUID().uuidString,
+                authorId: avatarId,
+                content: response,
+                seenByIds: nil,
+                dateCreated: .now
+            )
+            
+            chatMessages.append(newAIMessage)
+            
         } catch {
             showAlert = AnyAppAlert(
                 title: error.localizedDescription

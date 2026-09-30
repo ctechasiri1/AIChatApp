@@ -14,4 +14,5 @@ enum AIManagerError: LocalizedError {
 
 protocol AIService {
     func generateImage(from input: String) async throws -> UIImage
+    func generateText(from chats: [AIChatModel]) async throws -> AIChatModel
 }

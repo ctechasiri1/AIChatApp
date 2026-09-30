@@ -58,11 +58,16 @@ struct OpenAIService: AIService {
 }
 
 struct AIChatModel {
-    let role: AIChatOption
+    let role: AIChatRole
     let message: String
     
+    init(role: AIChatRole, message: String) {
+        self.role = role
+        self.message = message
+    }
+    
     init?(chat: ChatResult.Choice.ChatCompletionMessage) {
-        self.role = AIChatOption(role: chat.role)
+        self.role = AIChatRole(role: chat.role)
         
         if let message = chat.content?.string {
             self.message = message
@@ -79,11 +84,12 @@ struct AIChatModel {
     }
 }
 
-enum AIChatOption {
+// MARK: Finished at 16:42
+enum AIChatRole {
     case user, assistant, tool, system
     
     init(role: ChatQuery.ChatCompletionMessageParam.Role) {
-        switch self {
+        switch role {
         case .user:
             self = .user
         case .assistant:

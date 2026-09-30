@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ChatView: View {
+    @Environment(AuthManager.self) private var authManager
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(AIManager.self) private var aiManager
     
@@ -160,16 +161,11 @@ struct ChatView: View {
         do {
             try TextValidationHelper.checkIfTextIsValid(text: textFieldText)
             
+            let uid = try authManager.getAuthId()
             let newChatMessage = AIChatModel(role: .user, message: content)
+            let chatId = UUID().uuidString
             
-            let message = ChatMessageModel(
-                id: UUID().uuidString,
-                chatId: UUID().uuidString,
-                authorId: userId,
-                content: newChatMessage,
-                seenByIds: nil,
-                dateCreated: .now
-            )
+            let message = ChatMessageModel.newUserMessage(chatId: chatId, userId: uid, message: newChatMessage)
             
             chatMessages.append(message)
             
@@ -181,14 +177,7 @@ struct ChatView: View {
             
             let response = try await aiManager.generateText(from: aiChats)
             
-            let newAIMessage = ChatMessageModel(
-                id: UUID().uuidString,
-                chatId: UUID().uuidString,
-                authorId: avatarId,
-                content: response,
-                seenByIds: nil,
-                dateCreated: .now
-            )
+            let newAIMessage = ChatMessageModel.newAIMessage(chatId: chatId, avatarId: avatarId, messsage: response)
             
             chatMessages.append(newAIMessage)
             

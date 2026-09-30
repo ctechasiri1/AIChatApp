@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChatModel: Identifiable {
+struct ChatModel: Identifiable, Codable {
     let id: String
     let userId: String
     let avatarId: String
